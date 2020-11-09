@@ -1,85 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import firebase from 'firebase';
-import * as firebaseui from 'firebaseui'
-    
-const Home = () => {  
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [auth, setAuth] = useState();
-  useEffect(() => {
-    // eslint-disable-next-line no-undef
-    // chrome.runtime.sendMessage('neegjlhfgaekedifdpamjfglgelinhba',{ message: 'is-logged-in?' }, (res => {
-    //   console.log('res', res);
-    //   if(res.payload) {
-    //     setIsLoggedIn(true)
-    //   }
-    // }))
-
-    const  uiConfig = {
-      callbacks: {
-        signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-          console.log('authResult', authResult);
-          setIsLoggedIn(true)
-          setAuth(authResult)
-          // eslint-disable-next-line no-undef
-          chrome.runtime.sendMessage('neegjlhfgaekedifdpamjfglgelinhba',{ message: 'logged-in' })
-
-          return false;
-        },
-        uiShown: function() {
-          // document.getElementById('loader').style.display = 'none';
-        }
-      },
-      signInFlow: 'popup',
-      signInOptions: [
-        firebase.auth.GithubAuthProvider.PROVIDER_ID,
-        // {
-        //   provider: 
-        //   customParameters: {
-        //     prompt: 'consent'
-        //   }
-        // }
-      ],
-      // Terms of service url.
-      // tosUrl: '<your-tos-url>',
-      // Privacy policy url.
-      // privacyPolicyUrl: '<your-privacy-policy-url>'
-    };
-
-    const ui = new firebaseui.auth.AuthUI(firebase.auth());
-    ui.start('#firebaseui-auth-container', uiConfig);
-
-    firebase.auth().onAuthStateChanged(user => {
-      if(user) {
-        setIsLoggedIn(true)
-      }
-    })
-  }, [])
-
-  useEffect(() => {
-    if (!auth) return
-    console.log('auth', auth);
-    fetch('https://api.github.com/user', {
-      headers:{
-        "Authorization": `token ${auth.credential.accessToken}`,
-      }
-    })
-    .then(res => {
-      console.log('res', res);
-    })
-    .catch(err =>{
-      console.log('err', err);
-    })
-
-  },[auth])
-
+import { useContext } from "react";
+import FirebaseContext from "../../context/FirebaseContext";
+const Home = () => {
+  const firebase = useContext(FirebaseContext);
+  console.log("firebase home", firebase);
   return (
     <div>
-      <h1>QuickHub</h1>
-      {isLoggedIn ? 'logged in' : 
-      <div id="firebaseui-auth-container"></div>
-      }
+      <button
+        onClick={() => chrome.runtime.sendMessage({ message: "sign-out" })}
+      >
+        Sign Out
+      </button>
+      <h1>QuickHub Home</h1>
+      {firebase.name}
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
