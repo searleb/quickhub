@@ -1,3 +1,4 @@
+import React from "react";
 import Home from "../Home";
 import Firebase from "../Firebase";
 import "./App.css";
