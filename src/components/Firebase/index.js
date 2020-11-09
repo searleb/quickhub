@@ -1,1 +1,1 @@
-export { default } from "./Firebase";
+export { default } from './Firebase';

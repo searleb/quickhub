@@ -1,7 +1,7 @@
-import React from "react";
-import Home from "../Home";
-import Firebase from "../Firebase";
-import "./App.css";
+import React from 'react';
+import Home from '../Home';
+import Firebase from '../Firebase';
+import './App.css';
 
 function App() {
   return (

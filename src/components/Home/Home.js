@@ -1,17 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import FirebaseContext from "../../context/FirebaseContext";
+import React, { useContext, useEffect, useState } from 'react';
+import FirebaseContext from '../../context/FirebaseContext';
 
 const Home = () => {
   const [userRepos, setUserRepos] = useState([]);
   const firebase = useContext(FirebaseContext);
 
   useEffect(() => {
-    chrome.runtime.sendMessage({ action: "fetch-repos" });
+    chrome.runtime.sendMessage({ action: 'fetch-repos' });
   }, []);
 
   chrome.runtime.onMessage.addListener((message) => {
-    console.log("message", message);
-    if (message.action === "storage-userRepos") {
+    console.log('message', message);
+    if (message.action === 'storage-userRepos') {
       if (Array.isArray(message.payload)) {
         setUserRepos(message.payload);
       }
@@ -21,7 +21,8 @@ const Home = () => {
   return (
     <div>
       <button
-        onClick={() => chrome.runtime.sendMessage({ action: "sign-out" })}
+        type="button"
+        onClick={() => chrome.runtime.sendMessage({ action: 'sign-out' })}
       >
         Sign Out
       </button>

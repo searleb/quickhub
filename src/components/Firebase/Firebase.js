@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import FirebaseContext from "../../context/FirebaseContext";
+import React, { useEffect, useState } from 'react';
+import FirebaseContext from '../../context/FirebaseContext';
 
 const Firebase = ({ children }) => {
   const [state, setState] = useState({ signedIn: false, user: {} });
   const { sendMessage, onMessage } = chrome.runtime;
 
   useEffect(() => {
-    sendMessage({ action: "is-user-signed-in" });
+    sendMessage({ action: 'is-user-signed-in' });
   }, [sendMessage]);
 
   onMessage.addListener((message) => {
-    if (message.action === "auth-changed") {
+    if (message.action === 'auth-changed') {
       setState({
         signedIn: message.signedIn,
         user: message.user,
@@ -24,7 +24,7 @@ const Firebase = ({ children }) => {
     </FirebaseContext.Provider>
   ) : (
     <div>
-      <button onClick={() => sendMessage({ action: "sign-in" })}>
+      <button type="button" onClick={() => sendMessage({ action: 'sign-in' })}>
         Sign In with GitHub
       </button>
     </div>
