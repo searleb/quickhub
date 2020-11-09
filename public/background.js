@@ -1,5 +1,5 @@
 const { onMessage, sendMessage } = chrome.runtime;
-const githubAPI = 'https://api.github.com';
+const { storage } = chrome;
 
 const firebaseConfig = {
   apiKey: "AIzaSyBTNvKao3NH1E6Zjpd9j3aJRDtKlWxb8wE",
@@ -16,15 +16,14 @@ firebase.initializeApp(firebaseConfig);
 
 const provider = new firebase.auth.GithubAuthProvider();
 
+provider.addScope('repo');
 provider.addScope('read:org');
 provider.addScope('read:user');
 provider.addScope('notifications');
 
-let token = undefined;
-
-const sendUserStateChange = (signedIn, user) => {
+function sendUserStateChange(signedIn, user) {
   let payload = {
-    message: 'auth-changed',
+    action: 'auth-changed',
     signedIn,
     user: {}
   }
@@ -42,24 +41,24 @@ const sendUserStateChange = (signedIn, user) => {
 
 function signIn() {
   firebase.auth().signInWithPopup(provider).then(function(result) {
-    console.log('result', result);
-    // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-    token = result.credential.accessToken;
-    // const githubuser = result.additionalUserInfo.profile
-    // The signed-in user info.
-    // var user = result.user;
-    // console.log('token', token);
-    // // console.log('user', user);
-    // signedInUser = 
-    // sendUserStateChange(true, user)
+    // console.log('result', result);
+    storage.local.set({
+      githubProfile: result.additionalUserInfo.profile,
+      githubToken: result.credential.accessToken
+    })
   }).catch(function(error) {
     console.log('error', error);
   });
 }
 
+function signOut() {
+  firebase.auth().signOut()
+  chrome.storage.local.clear()
+}
+
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
-    console.log('user changed', user);
+    // console.log('user changed', user);
     sendUserStateChange(true, user)
   } else {
     console.log('user changed no user: ', user);
@@ -69,7 +68,7 @@ firebase.auth().onAuthStateChanged((user) => {
 
 function isUserSignedIn() {
   const user = firebase.auth().currentUser;
-  console.log('current user? ', user);
+  // console.log('current user? ', user);
   if(user) {
     sendUserStateChange(true, user)
   } else {
@@ -77,17 +76,91 @@ function isUserSignedIn() {
   }
 }
 
-onMessage.addListener((request, sender, sendResponse) => {
-  console.log('request.message', request.message);
-  switch (request.message) {
+const getGithubToken = async () => new Promise((resolve) => {
+  storage.local.get(['githubToken'], (res) => {
+    resolve(res.githubToken);
+  });
+})
+
+const getGithubProfile = async () => new Promise((resolve) => {
+  storage.local.get(['githubProfile'], (res) => {
+    resolve(res.githubProfile);
+  });
+})
+
+async function githubFetch(url) {
+  const token = await getGithubToken();
+
+  const data = await fetch(url, {
+    'headers':{
+      Authorization: `token ${token}`
+    }
+  })
+  if (data.ok) {
+    console.log('data.ok', data.ok);
+    return data.json();
+  } else {
+    // if not authorized, sign user out so they can sign in again.
+    if (data.status === 401) {
+      signOut();
+    }
+    console.error('data', data);
+  }
+}
+
+async function fetchOrgs(sendResponse) {
+  const data = await githubFetch('/user/orgs')
+  console.log('data', data);
+  sendResponse(data)
+}
+
+async function fetchRepos() {
+  const profile = await getGithubProfile();
+  // Send local storage data back to the front end. (fast)
+  storage.local.get(['userRepos'], (res) => {
+    sendMessage({ 
+      action: `storage-userRepos`,
+      payload: res?.userRepos,
+    })
+  })
+  // fetch from github and update local storage. (slow)
+  if(profile) {
+    const data = await githubFetch(`https://api.github.com/search/repositories?q=user:${profile.login}&sort=updated`);
+    storage.local.set({ userRepos: data.items });
+  }
+}
+
+/**
+ * If any data has changed between localstorage and 
+ * a fetch request, broadcast it to the frontend.
+ */
+storage.onChanged.addListener((changes) => {
+  console.log('changes', changes);
+  for (const key in changes) {
+    sendMessage({ 
+      action: `storage-${key}`,
+      payload: changes[key].newValue,
+    })
+  }
+})
+
+onMessage.addListener((message) => {
+  console.log('message.action', message.action);
+  switch (message.action) {
     case 'is-user-signed-in':
       isUserSignedIn()
       break;
     case 'sign-out':
-      firebase.auth().signOut();
+      signOut();
       break;
     case 'sign-in':
-      signIn()
+      signIn();
+      break;
+    case 'fetch-orgs':
+      fetchOrgs();
+      break;
+    case 'fetch-repos':
+      fetchRepos();
       break;
     default:
       break;
