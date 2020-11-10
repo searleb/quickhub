@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import Button from '../Button';
+import Header from '../Header';
 import FirebaseContext from '../../context/FirebaseContext';
-import Button from '../Button/Button';
 
 const Firebase = ({ children }) => {
   const [state, setState] = useState({ signedIn: false, user: {} });
@@ -21,16 +22,23 @@ const Firebase = ({ children }) => {
     });
   }
 
-  return state.signedIn ? (
-    <FirebaseContext.Provider value={state.user}>
-      {children}
+  return (
+    <FirebaseContext.Provider value={state}>
+      <main>
+        <Header />
+
+        {state.signedIn ? (
+          children
+        ) : (
+          <div className="flex justify-center mt-48">
+            <Button
+              onClick={() => sendMessage({ action: 'sign-in' })}
+              text="Sign In with GitHub"
+            />
+          </div>
+        )}
+      </main>
     </FirebaseContext.Provider>
-  ) : (
-    <div className="flex items-center justify-center h-full">
-      <Button onClick={() => sendMessage({ action: 'sign-in' })}>
-        Sign In with GitHub
-      </Button>
-    </div>
   );
 };
 

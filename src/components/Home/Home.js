@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
-import FirebaseContext from '../../context/FirebaseContext';
+import React, { useEffect, useState } from 'react';
 
 const Home = () => {
   const [userRepos, setUserRepos] = useState([]);
-  const firebase = useContext(FirebaseContext);
+
+  console.log('userRepos', userRepos);
 
   useEffect(() => {
     chrome.runtime.sendMessage({ action: 'fetch-repos' });
@@ -22,20 +22,28 @@ const Home = () => {
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => chrome.runtime.sendMessage({ action: 'sign-out' })}
-        className="bg-yellow-500"
-      >
-        Sign Out
-      </button>
-      <h1>QuickHub Home</h1>
-      {firebase.name}
       <ul>
         {userRepos.map((repo) => (
-          <li key={repo.id}>
-            <a href={repo.html_url} target="_blank" rel="noreferrer">
-              {repo.name}
+          <li key={repo.id} className="hover:bg-gray-200">
+            <a
+              href={repo.html_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex justify-between w-full px-2 py-1 truncate hover:cursor-pointer"
+            >
+              <span className="text-blue-900">
+                {repo.name}
+              </span>
+              {repo.private && (
+                <span className="px-1 text-xs text-blue-900 lowercase bg-gray-200 border border-gray-300 rounded">
+                  private
+                </span>
+              )}
+              {repo.archived && (
+                <span className="px-1 text-xs text-blue-900 lowercase bg-gray-200 border border-gray-300 rounded">
+                  archived
+                </span>
+              )}
             </a>
           </li>
         ))}

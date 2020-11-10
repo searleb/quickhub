@@ -14,6 +14,7 @@ provider.addScope('read:org');
 provider.addScope('read:user');
 provider.addScope('notifications');
 
+// Only firebase user data available here.
 function sendUserStateChange(signedIn, user) {
   let payload = {
     action: 'auth-changed',
@@ -37,7 +38,6 @@ function signIn() {
     .auth()
     .signInWithPopup(provider)
     .then((result) => {
-      // console.log('result', result);
       storage.local.set({
         githubProfile: result.additionalUserInfo.profile,
         githubToken: result.credential.accessToken,

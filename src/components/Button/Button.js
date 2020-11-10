@@ -1,12 +1,19 @@
 import React from 'react';
+import cn from 'classnames';
 
-const Button = ({ children, onClick }) => (
+const Button = ({ onClick, small, text }) => (
   <button
     type="button"
     onClick={onClick}
-    className="p-2 text-blue-900 transition-colors duration-200 bg-gray-200 border rounded hover:bg-gray-300"
+    className={cn(
+      ' text-blue-900 transition-colors duration-200 bg-gray-200 border rounded hover:bg-gray-400',
+      {
+        'p-2': !small,
+        'px-1': small,
+      },
+    )}
   >
-    {children}
+    {text}
   </button>
 );
 
