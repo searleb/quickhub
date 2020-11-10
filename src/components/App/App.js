@@ -1,11 +1,10 @@
 import React from 'react';
 import Home from '../Home';
 import Firebase from '../Firebase';
-import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <div style={{ height: '600px', width: '360px' }} className="bg-white">
       <Firebase>
         <Home />
       </Firebase>

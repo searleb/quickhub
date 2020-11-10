@@ -9,20 +9,23 @@ const Home = () => {
     chrome.runtime.sendMessage({ action: 'fetch-repos' });
   }, []);
 
-  chrome.runtime.onMessage.addListener((message) => {
-    console.log('message', message);
-    if (message.action === 'storage-userRepos') {
-      if (Array.isArray(message.payload)) {
-        setUserRepos(message.payload);
+  if (chrome.runtime.onMessage) {
+    chrome.runtime.onMessage.addListener((message) => {
+      console.log('message', message);
+      if (message.action === 'storage-userRepos') {
+        if (Array.isArray(message.payload)) {
+          setUserRepos(message.payload);
+        }
       }
-    }
-  });
+    });
+  }
 
   return (
     <div>
       <button
         type="button"
         onClick={() => chrome.runtime.sendMessage({ action: 'sign-out' })}
+        className="bg-yellow-500"
       >
         Sign Out
       </button>
