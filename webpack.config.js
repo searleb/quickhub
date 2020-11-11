@@ -9,7 +9,7 @@ module.exports = {
   },
   entry: {
     main: './src/index.js',
-    background: './src/background.js',
+    background: './src/background/background.js',
   },
   module: {
     rules: [

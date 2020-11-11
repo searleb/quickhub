@@ -1,13 +1,18 @@
 import React from 'react';
 import Home from '../Home';
-import Firebase from '../Firebase';
+import AppContextProvider from '../../context/AppContext';
+import SignIn from '../SignIn';
+import Header from '../Header';
 
 function App() {
   return (
     <div style={{ height: '600px', width: '360px' }} className="py-2 overflow-auto text-sm bg-white">
-      <Firebase>
-        <Home />
-      </Firebase>
+      <AppContextProvider>
+        <Header />
+        <SignIn>
+          <Home />
+        </SignIn>
+      </AppContextProvider>
     </div>
   );
 }

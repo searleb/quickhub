@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import cn from 'classnames';
-import FirebaseContext from '../../context/FirebaseContext';
 import Button from '../Button';
+import { useAppContext } from '../../context/AppContext';
 
 const Header = () => {
-  const { user: { name, photo }, signedIn } = useContext(FirebaseContext);
+  const { user: { name, photo }, signedIn, githubProfile } = useAppContext();
   return (
     <section className="flex justify-between px-2 pb-2 mb-8 border-b-2">
       <h1 className={cn('transition-all duration-200 transform', {
@@ -14,7 +14,9 @@ const Header = () => {
       >
         QuickHub
       </h1>
-      <img src={photo} alt={name} className="w-8 rounded-full" />
+      <a href={githubProfile.html_url} target="_blank" rel="noopener noreferrer" className="hover:cursor-pointer">
+        <img src={photo} alt={name} className="w-8 rounded-full" />
+      </a>
       {signedIn && (
         <Button
           small

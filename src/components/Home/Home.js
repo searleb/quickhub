@@ -1,27 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useAppContext } from '../../context/AppContext';
 
 const Home = () => {
-  const [userRepos, setUserRepos] = useState([]);
-
-  console.log('userRepos', userRepos);
+  const { userRepos, githubProfile } = useAppContext();
 
   useEffect(() => {
     chrome.runtime.sendMessage({ action: 'fetch-repos' });
+    chrome.runtime.sendMessage({ action: 'fetch-profile' });
   }, []);
-
-  if (chrome.runtime.onMessage) {
-    chrome.runtime.onMessage.addListener((message) => {
-      console.log('message', message);
-      if (message.action === 'storage-userRepos') {
-        if (Array.isArray(message.payload)) {
-          setUserRepos(message.payload);
-        }
-      }
-    });
-  }
 
   return (
     <div>
+      <section className="p-2">
+        <a href={`https://gist.github.com/${githubProfile.login}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+          Gists
+        </a>
+      </section>
       <ul>
         {userRepos.map((repo) => (
           <li key={repo.id} className="hover:bg-gray-200">
