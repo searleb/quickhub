@@ -1,5 +1,7 @@
 import { isUserSignedIn, signOut, signIn } from './firebase';
-import { fetchOrgs, fetchProfile, fetchRepos } from './github';
+import {
+  fetchRepos, fetchOrgs, fetchInitializeData, fetchGithubUrl, fetchGists,
+} from './github';
 
 const { onMessage, sendMessage } = chrome.runtime;
 const { storage } = chrome;
@@ -18,7 +20,7 @@ storage.onChanged.addListener((changes) => {
   });
 });
 
-onMessage.addListener((message) => {
+onMessage.addListener((message, sender, sendResponse) => {
   console.log('message.action', message.action);
   switch (message.action) {
     case 'is-user-signed-in':
@@ -30,16 +32,27 @@ onMessage.addListener((message) => {
     case 'sign-in':
       signIn();
       break;
-    case 'fetch-orgs':
-      fetchOrgs();
-      break;
     case 'fetch-repos':
       fetchRepos();
       break;
-    case 'fetch-profile':
-      fetchProfile();
+    case 'fetch-orgs':
+      fetchOrgs();
       break;
+    // case 'fetch-profile':
+    //   fetchProfile();
+    //   break;
+    case 'initialize':
+      fetchInitializeData();
+      break;
+    case 'fetchGithub':
+      fetchGithubUrl(message.url, sendResponse);
+      return true;
+    case 'fetchGists':
+      fetchGists(sendResponse);
+      return true;
     default:
+      console.log(`unknown action: ${message.action}`);
       break;
   }
+  return undefined;
 });

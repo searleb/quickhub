@@ -6,7 +6,7 @@ import { useAppContext } from '../../context/AppContext';
 const Header = () => {
   const { user: { name, photo }, signedIn, githubProfile } = useAppContext();
   return (
-    <section className="flex justify-between px-2 pb-2 mb-8 border-b-2">
+    <section className="flex justify-between px-2 pb-2 mb-4 border-b-2">
       <h1 className={cn('transition-all duration-200 transform', {
         'text-4xl': !signedIn,
         'text-lg': signedIn,

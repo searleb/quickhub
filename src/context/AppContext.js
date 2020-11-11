@@ -6,6 +6,7 @@ const initialState = {
   signedIn: false,
   user: {},
   userRepos: [],
+  userOrgs: [],
   githubProfile: {},
 };
 
@@ -13,6 +14,7 @@ const AppContext = createContext();
 
 function AppContextProvider({ children }) {
   const [state, setState] = useState(initialState);
+  console.log('state: ', state);
 
   useEffect(() => {
     const reducer = (message) => {
@@ -34,6 +36,22 @@ function AppContextProvider({ children }) {
             });
           }
           break;
+        case 'storage-userOrgs':
+          if (Array.isArray(message.payload)) {
+            setState({
+              ...state,
+              userOrgs: message.payload,
+            });
+          }
+          break;
+        // case 'storage-orgRepos':
+        //   if (Array.isArray(message.payload)) {
+        //     setState({
+        //       ...state,
+        //       orgRepos: message.payload,
+        //     });
+        //   }
+        //   break;
         case 'auth-changed':
           setState({
             ...state,
@@ -41,8 +59,14 @@ function AppContextProvider({ children }) {
             user: message.user,
           });
           break;
+        case 'initialize':
+          setState({
+            ...state,
+            ...message.payload,
+          });
+          break;
         default:
-          console.warn(`unknown action: ${message.action}`);
+          console.log(`unknown action: ${message.action}`);
       }
     };
 

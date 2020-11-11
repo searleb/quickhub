@@ -1,5 +1,7 @@
 import { signOut } from './firebase';
 
+const githubApi = 'https://api.github.com';
+
 const { sendMessage } = chrome.runtime;
 const { storage } = chrome;
 
@@ -36,32 +38,73 @@ async function githubFetch(url) {
 }
 
 export async function fetchOrgs() {
-  const data = await githubFetch('/user/orgs');
-  console.log('data', data);
+  // storage.local.get(['userOrgs'], (res) => {
+  //   sendMessage({
+  //     action: 'storage-userOrgs',
+  //     payload: res?.userOrgs,
+  //   });
+  // });
+  const orgs = await githubFetch(`${githubApi}/user/orgs`);
+  storage.local.set({ userOrgs: orgs });
 }
 
 export async function fetchRepos() {
   const profile = await getGithubProfile();
   // Send local storage data back to the front end. (fast)
-  storage.local.get(['userRepos'], (res) => {
-    sendMessage({
-      action: 'storage-userRepos',
-      payload: res?.userRepos,
-    });
-  });
+  // storage.local.get(['userRepos'], (res) => {
+  //   sendMessage({
+  //     action: 'storage-userRepos',
+  //     payload: res?.userRepos,
+  //   });
+  // });
   // fetch from github and update local storage. (slow)
   if (profile) {
-    const data = await githubFetch(
-      `https://api.github.com/search/repositories?q=user:${profile.login}&sort=updated`,
-    );
-    storage.local.set({ userRepos: data.items });
+    /*
+    * This is annoying, the profile api path (profile.repo_url) only returns public repos
+    * so we have to use the search endpoint which returns public and private repos?
+    */
+    const repos = await githubFetch(`${githubApi}/search/repositories?q=user:${profile.login}&sort=updated`);
+
+    storage.local.set({ userRepos: repos.items });
   }
 }
 
-export async function fetchProfile() {
-  const profile = await getGithubProfile();
-  sendMessage({
-    action: 'storage-githubProfile',
-    payload: profile,
-  });
+// export async function fetchProfile() {
+//   const profile = await getGithubProfile();
+//   console.log('profile', profile);
+//   sendMessage({
+//     action: 'storage-githubProfile',
+//     payload: profile,
+//   });
+// }
+
+export async function fetchInitializeData() {
+  // Send local storage data back to the front end. (fast)
+  storage.local.get(
+    ['githubProfile', 'userRepos', 'userOrgs'],
+    ({ githubProfile, userRepos, userOrgs }) => {
+      sendMessage({
+        action: 'initialize',
+        payload: {
+          githubProfile,
+          userRepos,
+          userOrgs,
+        },
+      });
+    },
+  );
+
+  fetchRepos();
+  fetchOrgs();
+}
+
+export async function fetchGithubUrl(url, sendResponse) {
+  const data = await githubFetch(url);
+  sendResponse(data);
+  console.log('data', data);
+}
+
+export async function fetchGists(sendResponse) {
+  const gists = await githubFetch(`${githubApi}/gists?per_page=100`);
+  sendResponse(gists);
 }
