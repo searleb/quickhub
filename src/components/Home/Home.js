@@ -20,9 +20,19 @@ const OrgRepo = ({ org, gist }) => {
   }, [gist, org]);
 
   return (
-    <ul className="list-none">
-      {repos.map((repo) => <RepoListItem key={repo.id} repo={repo} />)}
-    </ul>
+    repos.length > 0
+      ? (
+        <ul className="list-none">
+          {repos.map((repo) => <RepoListItem key={repo.id} repo={repo} />)}
+        </ul>
+      ) : (
+        <div className="w-full mt-6 text-xs text-center">
+          <span className="block text-xl">
+            🦥
+          </span>
+          Hold on...
+        </div>
+      )
   );
 };
 

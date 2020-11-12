@@ -8,7 +8,7 @@ import { SIGN_OUT } from '../../actions';
 
 function App() {
   return (
-    <div style={{ minHeight: '600px', width: '360px' }} className="py-2 text-sm">
+    <div style={{ minHeight: '600px', width: '360px' }} className="text-sm">
       <AppContextProvider>
         <SignIn>
           <Header />

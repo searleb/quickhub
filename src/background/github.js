@@ -103,3 +103,21 @@ export async function fetchGithubNotifications(sendResponse) {
   const gists = await githubFetch(`${githubApi}/notifications`);
   sendResponse(gists);
 }
+
+let intervalId;
+chrome.runtime.onStartup.addListener(() => {
+  const updateNotificationBadge = async () => {
+    const notifications = await githubFetch(`${githubApi}/notifications`);
+    chrome.browserAction.setBadgeText({ text: `${notifications.length}` });
+  };
+
+  intervalId = setInterval(async () => {
+    updateNotificationBadge();
+  }, 1000 * 60 * 10);
+
+  updateNotificationBadge();
+});
+
+chrome.runtime.onSuspend.addListener(() => {
+  clearInterval(intervalId);
+});

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import cn from 'classnames';
 import Button from '../Button';
 
 const Tabs = ({ buttons, panes }) => {
@@ -8,16 +9,23 @@ const Tabs = ({ buttons, panes }) => {
 
   return (
     <section>
-      <ul className="flex items-center overflow-x-auto list-none">
-        {btns.map((btn, i) => (
-          <Button
-            className="mx-1 my-1"
-            active={i === tabIndex}
-            onClick={() => setTabIndex(btn.id)}
-            text={btn.content}
-          />
-        ))}
-      </ul>
+      <div className="overflow-hidden">
+        <ul className="flex items-center pt-2 overflow-x-auto list-none bg-gray-200 no-scrollbar">
+          {btns.map((btn, i) => (
+            <button
+              type="button"
+              className={cn('p-3 rounded-t-md whitespace-no-wrap focus:bg-white focus:text-black focus:outline-none', {
+                'bg-white font-medium shadow z-10': i === tabIndex,
+                'bg-blue-900 text-blue-100 shadow-inner': i !== tabIndex,
+              })}
+              onClick={() => setTabIndex(btn.id)}
+            >
+              {btn.content}
+            </button>
+          ))}
+        </ul>
+
+      </div>
       {panes.map((pane, i) => (
         i === tabIndex && <div key={pane}>{pane}</div>
       ))}

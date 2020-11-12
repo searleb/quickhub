@@ -9,6 +9,7 @@ const Header = () => {
     if (signedIn) {
       chrome.runtime.sendMessage({ action: FETCH_NOTIFICATIONS }, (res) => {
         setNotifications(res);
+        chrome.browserAction.setBadgeText({ text: `${res.length}` });
       });
     }
   }, [signedIn]);
@@ -20,7 +21,7 @@ const Header = () => {
       </a>
       <h1 className="text-base">QuickHub</h1>
       <a href="http://github.com/notifications" target="_blank" rel="noopener noreferrer">
-        <span className="block w-4 h-4 text-xs text-center text-white bg-blue-500 rounded-full">
+        <span className="block w-4 h-4 text-xs text-center text-white bg-blue-500 rounded">
           {notifications.length}
         </span>
       </a>
