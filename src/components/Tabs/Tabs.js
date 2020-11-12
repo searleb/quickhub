@@ -14,8 +14,8 @@ const Tabs = ({ buttons, panes }) => {
           {btns.map((btn, i) => (
             <button
               type="button"
-              className={cn('p-3 rounded-t-md whitespace-no-wrap focus:bg-white focus:text-black focus:outline-none', {
-                'bg-white font-medium shadow z-10': i === tabIndex,
+              className={cn('font-medium p-3 rounded-t-md whitespace-no-wrap focus:bg-white focus:text-black focus:outline-none', {
+                'bg-white shadow z-10': i === tabIndex,
                 'bg-blue-900 text-blue-100 shadow-inner': i !== tabIndex,
               })}
               onClick={() => setTabIndex(btn.id)}

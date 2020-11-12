@@ -15,7 +15,7 @@ const Header = () => {
   }, [signedIn]);
 
   return (
-    <section className="fixed top-0 flex items-center justify-between w-full p-2 bg-white border-b-2">
+    <section className="fixed top-0 z-20 flex items-center justify-between w-full p-2 bg-white border-b-2">
       <a href={githubProfile.html_url} target="_blank" rel="noopener noreferrer" className="hover:cursor-pointer">
         <img src={photo} alt={name} className="w-8 rounded-full" />
       </a>
