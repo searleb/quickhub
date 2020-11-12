@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import { AUTH_CHANGED } from '../actions';
 import firebaseConfig from './firebaseConfig';
 
 const { sendMessage } = chrome.runtime;
@@ -45,7 +46,7 @@ export function signOut() {
 // Only firebase user data available here.
 function sendUserStateChange(signedIn, user) {
   let payload = {
-    action: 'auth-changed',
+    action: AUTH_CHANGED,
     signedIn,
     user: {},
   };

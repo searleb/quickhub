@@ -1,6 +1,7 @@
 import React, {
   createContext, useContext, useEffect, useState,
 } from 'react';
+import { INITIALIZE, AUTH_CHANGED } from '../actions';
 
 const initialState = {
   signedIn: false,
@@ -18,7 +19,6 @@ function AppContextProvider({ children }) {
 
   useEffect(() => {
     const reducer = (message) => {
-      console.log('message', message);
       switch (message.action) {
         case 'storage-githubProfile':
           if (message.payload) {
@@ -44,22 +44,14 @@ function AppContextProvider({ children }) {
             });
           }
           break;
-        // case 'storage-orgRepos':
-        //   if (Array.isArray(message.payload)) {
-        //     setState({
-        //       ...state,
-        //       orgRepos: message.payload,
-        //     });
-        //   }
-        //   break;
-        case 'auth-changed':
+        case AUTH_CHANGED:
           setState({
             ...state,
             signedIn: message.signedIn,
             user: message.user,
           });
           break;
-        case 'initialize':
+        case INITIALIZE:
           setState({
             ...state,
             ...message.payload,

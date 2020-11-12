@@ -1,3 +1,4 @@
+import { INITIALIZE } from '../actions';
 import { signOut } from './firebase';
 
 const githubApi = 'https://api.github.com';
@@ -20,6 +21,10 @@ const getGithubProfile = async () => new Promise((resolve) => {
 async function githubFetch(url) {
   const token = await getGithubToken();
 
+  if (!token) {
+    return undefined;
+  }
+
   const data = await fetch(url, {
     headers: {
       Authorization: `token ${token}`,
@@ -33,17 +38,11 @@ async function githubFetch(url) {
   if (data.status === 401) {
     signOut();
   }
-  console.error('data', data);
+
   return undefined;
 }
 
 export async function fetchOrgs() {
-  // storage.local.get(['userOrgs'], (res) => {
-  //   sendMessage({
-  //     action: 'storage-userOrgs',
-  //     payload: res?.userOrgs,
-  //   });
-  // });
   const orgs = await githubFetch(`${githubApi}/user/orgs`);
   storage.local.set({ userOrgs: orgs });
 }
@@ -69,22 +68,13 @@ export async function fetchRepos() {
   }
 }
 
-// export async function fetchProfile() {
-//   const profile = await getGithubProfile();
-//   console.log('profile', profile);
-//   sendMessage({
-//     action: 'storage-githubProfile',
-//     payload: profile,
-//   });
-// }
-
 export async function fetchInitializeData() {
   // Send local storage data back to the front end. (fast)
   storage.local.get(
     ['githubProfile', 'userRepos', 'userOrgs'],
     ({ githubProfile, userRepos, userOrgs }) => {
       sendMessage({
-        action: 'initialize',
+        action: INITIALIZE,
         payload: {
           githubProfile,
           userRepos,
@@ -105,6 +95,11 @@ export async function fetchGithubUrl(url, sendResponse) {
 }
 
 export async function fetchGists(sendResponse) {
-  const gists = await githubFetch(`${githubApi}/gists?per_page=100`);
+  const gists = await githubFetch(`${githubApi}/gists`);
+  sendResponse(gists);
+}
+
+export async function fetchGithubNotifications(sendResponse) {
+  const gists = await githubFetch(`${githubApi}/notifications`);
   sendResponse(gists);
 }

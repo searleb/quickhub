@@ -1,6 +1,12 @@
+import {
+  FETCH_GISTS,
+  FETCH_GITHUB,
+  FETCH_NOTIFICATIONS,
+  INITIALIZE, IS_USER_SIGNED_IN, SIGN_IN, SIGN_OUT,
+} from '../actions';
 import { isUserSignedIn, signOut, signIn } from './firebase';
 import {
-  fetchRepos, fetchOrgs, fetchInitializeData, fetchGithubUrl, fetchGists,
+  fetchInitializeData, fetchGithubUrl, fetchGists, fetchGithubNotifications,
 } from './github';
 
 const { onMessage, sendMessage } = chrome.runtime;
@@ -23,32 +29,26 @@ storage.onChanged.addListener((changes) => {
 onMessage.addListener((message, sender, sendResponse) => {
   console.log('message.action', message.action);
   switch (message.action) {
-    case 'is-user-signed-in':
+    case IS_USER_SIGNED_IN:
       isUserSignedIn();
       break;
-    case 'sign-out':
+    case SIGN_OUT:
       signOut();
       break;
-    case 'sign-in':
+    case SIGN_IN:
       signIn();
       break;
-    case 'fetch-repos':
-      fetchRepos();
-      break;
-    case 'fetch-orgs':
-      fetchOrgs();
-      break;
-    // case 'fetch-profile':
-    //   fetchProfile();
-    //   break;
-    case 'initialize':
+    case INITIALIZE:
       fetchInitializeData();
       break;
-    case 'fetchGithub':
+    case FETCH_GITHUB:
       fetchGithubUrl(message.url, sendResponse);
       return true;
-    case 'fetchGists':
+    case FETCH_GISTS:
       fetchGists(sendResponse);
+      return true;
+    case FETCH_NOTIFICATIONS:
+      fetchGithubNotifications(sendResponse);
       return true;
     default:
       console.log(`unknown action: ${message.action}`);

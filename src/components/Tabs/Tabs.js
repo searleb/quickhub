@@ -7,18 +7,17 @@ const Tabs = ({ buttons, panes }) => {
   const btns = buttons.reduce((acc, btn, i) => [...acc, { id: i, content: btn }], []);
 
   return (
-    <section className="relative">
-      <div>
-        <ul className="flex overflow-x-auto list-none">
-          {btns.map((btn) => (
-            <Button
-              className="inline-flex w-full"
-              onClick={() => setTabIndex(btn.id)}
-              text={btn.content}
-            />
-          ))}
-        </ul>
-      </div>
+    <section>
+      <ul className="flex items-center overflow-x-auto list-none">
+        {btns.map((btn, i) => (
+          <Button
+            className="mx-1 my-1"
+            active={i === tabIndex}
+            onClick={() => setTabIndex(btn.id)}
+            text={btn.content}
+          />
+        ))}
+      </ul>
       {panes.map((pane, i) => (
         i === tabIndex && <div key={pane}>{pane}</div>
       ))}

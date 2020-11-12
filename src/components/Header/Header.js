@@ -1,29 +1,29 @@
-import React from 'react';
-import cn from 'classnames';
-import Button from '../Button';
+import React, { useEffect, useState } from 'react';
 import { useAppContext } from '../../context/AppContext';
+import { FETCH_NOTIFICATIONS } from '../../actions';
 
 const Header = () => {
   const { user: { name, photo }, signedIn, githubProfile } = useAppContext();
+  const [notifications, setNotifications] = useState([]);
+  useEffect(() => {
+    if (signedIn) {
+      chrome.runtime.sendMessage({ action: FETCH_NOTIFICATIONS }, (res) => {
+        setNotifications(res);
+      });
+    }
+  }, [signedIn]);
+
   return (
-    <section className="flex justify-between px-2 pb-2 mb-4 border-b-2">
-      <h1 className={cn('transition-all duration-200 transform', {
-        'text-4xl': !signedIn,
-        'text-lg': signedIn,
-      })}
-      >
-        QuickHub
-      </h1>
+    <section className="fixed top-0 flex items-center justify-between w-full p-2 bg-white border-b-2">
       <a href={githubProfile.html_url} target="_blank" rel="noopener noreferrer" className="hover:cursor-pointer">
         <img src={photo} alt={name} className="w-8 rounded-full" />
       </a>
-      {signedIn && (
-        <Button
-          small
-          onClick={() => chrome.runtime.sendMessage({ action: 'sign-out' })}
-          text="Sign Out"
-        />
-      )}
+      <h1 className="text-base">QuickHub</h1>
+      <a href="http://github.com/notifications" target="_blank" rel="noopener noreferrer">
+        <span className="block w-4 h-4 text-xs text-center text-white bg-blue-500 rounded-full">
+          {notifications.length}
+        </span>
+      </a>
     </section>
   );
 };
