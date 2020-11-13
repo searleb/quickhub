@@ -15,7 +15,7 @@ const AppContext = createContext();
 
 function AppContextProvider({ children }) {
   const [state, setState] = useState(initialState);
-  console.log('state: ', state);
+  // console.log('state: ', state);
 
   useEffect(() => {
     const reducer = (message) => {

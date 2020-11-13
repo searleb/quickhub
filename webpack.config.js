@@ -1,4 +1,5 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -39,6 +40,11 @@ module.exports = {
       template: './src/index.html',
       filename: './index.html',
       excludeChunks: ['background'],
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: 'src/icons', to: 'icons' },
+      ],
     }),
   ],
 };

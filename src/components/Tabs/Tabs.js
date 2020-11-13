@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
-import Button from '../Button';
 
 const Tabs = ({ buttons, panes }) => {
   const [tabIndex, setTabIndex] = useState(0);

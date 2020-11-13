@@ -17,7 +17,7 @@ const { storage } = chrome;
  * a fetch request, broadcast it to the frontend.
  */
 storage.onChanged.addListener((changes) => {
-  console.log('changes', changes);
+  // console.log('changes', changes);
   Object.keys(changes).forEach((key) => {
     sendMessage({
       action: `storage-${key}`,
@@ -27,7 +27,7 @@ storage.onChanged.addListener((changes) => {
 });
 
 onMessage.addListener((message, sender, sendResponse) => {
-  console.log('message.action', message.action);
+  // console.log('message.action', message.action);
   switch (message.action) {
     case IS_USER_SIGNED_IN:
       isUserSignedIn();
