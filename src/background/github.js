@@ -91,7 +91,6 @@ export async function fetchInitializeData() {
 export async function fetchGithubUrl(url, sendResponse) {
   const data = await githubFetch(url);
   sendResponse(data);
-  console.log('data', data);
 }
 
 export async function fetchGists(sendResponse) {

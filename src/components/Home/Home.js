@@ -8,7 +8,7 @@ const OrgRepo = ({ org, gist }) => {
   const [repos, setRepos] = useState([]);
   useEffect(() => {
     if (org) {
-      chrome.runtime.sendMessage({ action: FETCH_GITHUB, url: org.repos_url }, ((res) => {
+      chrome.runtime.sendMessage({ action: FETCH_GITHUB, url: `${org.repos_url}?sort=updated` }, ((res) => {
         setRepos(res);
       }));
     }
