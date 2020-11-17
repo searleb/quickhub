@@ -17,7 +17,7 @@ const { storage } = chrome;
  * a fetch request, broadcast it to the frontend.
  */
 storage.onChanged.addListener((changes) => {
-  // console.log('changes', changes);
+  console.log('changes', changes);
   Object.keys(changes).forEach((key) => {
     sendMessage({
       action: `storage-${key}`,
