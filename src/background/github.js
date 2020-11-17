@@ -108,12 +108,14 @@ let intervalId;
 chrome.runtime.onStartup.addListener(() => {
   const updateNotificationBadge = async () => {
     const notifications = await githubFetch(`${githubApi}/notifications`);
-    chrome.browserAction.setBadgeText({ text: `${notifications.length}` });
+    if (Array.isArray(notifications)) {
+      chrome.browserAction.setBadgeText({ text: `${notifications.length}` });
+    }
   };
 
   intervalId = setInterval(async () => {
     updateNotificationBadge();
-  }, 1000 * 60 * 10);
+  }, 1000 * 60 * 15);
 
   updateNotificationBadge();
 });
