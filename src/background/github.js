@@ -31,7 +31,6 @@ async function githubFetch(url) {
     },
   });
   if (data.ok) {
-    console.log('data.ok', data.ok);
     return data.json();
   }
   // if not authorized, sign user out so they can sign in again.
@@ -47,24 +46,16 @@ export async function fetchOrgs() {
   storage.local.set({ userOrgs: orgs });
 }
 
-export async function fetchRepos() {
+export async function fetchUserRepos(page = 1, sendResponse) {
   const profile = await getGithubProfile();
-  // Send local storage data back to the front end. (fast)
-  // storage.local.get(['userRepos'], (res) => {
-  //   sendMessage({
-  //     action: 'storage-userRepos',
-  //     payload: res?.userRepos,
-  //   });
-  // });
-  // fetch from github and update local storage. (slow)
   if (profile) {
     /*
     * This is annoying, the profile api path (profile.repo_url) only returns public repos
     * so we have to use the search endpoint which returns public and private repos?
     */
-    const repos = await githubFetch(`${githubApi}/search/repositories?q=user:${profile.login}&sort=updated`);
-
-    storage.local.set({ userRepos: repos.items });
+    const repos = await githubFetch(`${githubApi}/search/repositories?q=user:${profile.login}&sort=updated&page=${page}`);
+    sendResponse(repos.items);
+    // storage.local.set({ userRepos: repos.items });
   }
 }
 
@@ -84,7 +75,6 @@ export async function fetchInitializeData() {
     },
   );
 
-  fetchRepos();
   fetchOrgs();
 }
 
@@ -93,9 +83,12 @@ export async function fetchGithubUrl(url, sendResponse) {
   sendResponse(data);
 }
 
-export async function fetchGists(sendResponse) {
-  const gists = await githubFetch(`${githubApi}/gists`);
+export async function fetchGists(page = 1, sendResponse) {
+  const gists = await githubFetch(`${githubApi}/gists?page=${page}`);
   sendResponse(gists);
+  setTimeout(() => {
+    sendResponse('send time around?');
+  }, 500);
 }
 
 export async function fetchGithubNotifications(sendResponse) {

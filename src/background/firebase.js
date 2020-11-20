@@ -64,7 +64,6 @@ function sendUserStateChange(signedIn, user) {
 
 export function isUserSignedIn() {
   const user = firebase.auth().currentUser;
-  // console.log('current user? ', user);
   if (user) {
     sendUserStateChange(true, user);
   } else {
@@ -74,10 +73,8 @@ export function isUserSignedIn() {
 
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
-    // console.log('user changed', user);
     sendUserStateChange(true, user);
   } else {
-    console.log('user changed no user: ', user);
     sendUserStateChange(false);
   }
 });

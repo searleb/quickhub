@@ -1,43 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { FETCH_GISTS, FETCH_GITHUB, INITIALIZE } from '../../actions';
+import React, { useEffect } from 'react';
+import { INITIALIZE } from '../../actions';
 import { useAppContext } from '../../context/AppContext';
-import RepoListItem from '../RepoListItem';
+import Repo from '../OrgRepo/OrgRepo';
 import Tabs from '../Tabs/Tabs';
 
-const OrgRepo = ({ org, gist }) => {
-  const [repos, setRepos] = useState([]);
-  useEffect(() => {
-    if (org) {
-      chrome.runtime.sendMessage({ action: FETCH_GITHUB, url: `${org.repos_url}?sort=updated` }, ((res) => {
-        setRepos(res);
-      }));
-    }
-    if (gist) {
-      chrome.runtime.sendMessage({ action: FETCH_GISTS }, ((res) => {
-        setRepos(res);
-      }));
-    }
-  }, [gist, org]);
-
-  return (
-    repos.length > 0
-      ? (
-        <ul className="list-none">
-          {repos.map((repo) => <RepoListItem key={repo.id} repo={repo} />)}
-        </ul>
-      ) : (
-        <div className="w-full mt-6 text-xs text-center">
-          <span className="block text-xl">
-            🦥
-          </span>
-          Hold on...
-        </div>
-      )
-  );
-};
-
 const Home = () => {
-  const { userRepos, githubProfile, userOrgs } = useAppContext();
+  const { githubProfile, userOrgs } = useAppContext();
 
   useEffect(() => {
     chrome.runtime.sendMessage({ action: INITIALIZE });
@@ -52,11 +20,9 @@ const Home = () => {
           ...userOrgs.map((org) => org.login),
         ]}
         panes={[
-          <ul>
-            {userRepos.map((repo) => <RepoListItem key={repo.id} repo={repo} />)}
-          </ul>,
-          <OrgRepo gist />,
-          ...userOrgs.map((org) => <OrgRepo key={org.id} org={org} />),
+          <Repo key="user" type="user" />,
+          <Repo key="gists" type="gists" />,
+          ...userOrgs.map((org) => <Repo key={org.id} org={org} type="org" />),
         ]}
       />
     </section>

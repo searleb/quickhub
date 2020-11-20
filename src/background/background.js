@@ -2,11 +2,15 @@ import {
   FETCH_GISTS,
   FETCH_GITHUB,
   FETCH_NOTIFICATIONS,
-  INITIALIZE, IS_USER_SIGNED_IN, SIGN_IN, SIGN_OUT,
+  FETCH_USER_REPOS,
+  INITIALIZE,
+  IS_USER_SIGNED_IN,
+  SIGN_IN,
+  SIGN_OUT,
 } from '../actions';
 import { isUserSignedIn, signOut, signIn } from './firebase';
 import {
-  fetchInitializeData, fetchGithubUrl, fetchGists, fetchGithubNotifications,
+  fetchInitializeData, fetchGithubUrl, fetchGists, fetchGithubNotifications, fetchUserRepos,
 } from './github';
 
 const { onMessage, sendMessage } = chrome.runtime;
@@ -17,7 +21,6 @@ const { storage } = chrome;
  * a fetch request, broadcast it to the frontend.
  */
 storage.onChanged.addListener((changes) => {
-  console.log('changes', changes);
   Object.keys(changes).forEach((key) => {
     sendMessage({
       action: `storage-${key}`,
@@ -45,10 +48,13 @@ onMessage.addListener((message, sender, sendResponse) => {
       fetchGithubUrl(message.url, sendResponse);
       return true;
     case FETCH_GISTS:
-      fetchGists(sendResponse);
+      fetchGists(message.page, sendResponse);
       return true;
     case FETCH_NOTIFICATIONS:
       fetchGithubNotifications(sendResponse);
+      return true;
+    case FETCH_USER_REPOS:
+      fetchUserRepos(message.page, sendResponse);
       return true;
     default:
       console.log(`unknown action: ${message.action}`);

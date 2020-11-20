@@ -21,7 +21,7 @@ function App() {
             <Button
               small
               onClick={() => chrome.runtime.sendMessage({ action: SIGN_OUT })}
-              text="Sign Out"
+              text="sign out"
             />
           </section>
         </SignIn>
