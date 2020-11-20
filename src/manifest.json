@@ -1,0 +1,23 @@
+{
+  "short_name": "QuickHub",
+  "name": "QuickHub For GitHub",
+  "description": "Quick access to all your GitHub repos, gists and notifications.",
+  "manifest_version": 2,
+  "version": "1.0.1",
+  "icons": {
+    "128": "./icons/128-icon.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "browser_action": {
+    "default_popup": "index.html"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ],
+    "persistent": true
+  },
+  "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self';"
+}

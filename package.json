@@ -6,8 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "NODE_ENV=production webpack --mode=production",
-    "build:dev": "webpack",
-    "dev": "webpack serve"
+    "release": "standard-version && npm run build",
+    "release:patch": "npm run release -- --release-as patch ",
+    "release:minor": "npm run release -- --release-as minor",
+    "release:major": "npm run release -- --release-as major"
+  },
+  "standard-version": {
+    "bumpFiles": [
+      "src/manifest.json",
+      "package.json"
+    ]
   },
   "keywords": [],
   "author": "",
