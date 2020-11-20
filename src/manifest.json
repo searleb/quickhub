@@ -3,7 +3,7 @@
   "name": "QuickHub For GitHub",
   "description": "Quick access to all your GitHub repos, gists and notifications.",
   "manifest_version": 2,
-  "version": "1.0.1",
+  "version": "1.1.0",
   "icons": {
     "128": "./icons/128-icon.png"
   },
